@@ -1,4 +1,4 @@
-const appWriteConfig = {
+export const appWriteConfig = {
     endpointUrl:process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT_URL!,
     projectId:process.env.NEXT_PUBLIC_APPWRITE_PROJECT!,
     databaseId: process.env.NEXT_PUBLIC_APPWRITE_DATABASE!,
