@@ -1,9 +1,5 @@
+import AuthForm from "@/components/AuthForm";
 
-export default function age(){
-  return (
-    <div>
-      hii frim sign in
-    </div>
-  )
+export default function age() {
+  return <AuthForm type="sign-in" />;
 }
-
