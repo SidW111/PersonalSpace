@@ -3,6 +3,7 @@
 import { ID, Query } from "node-appwrite";
 import { createAdminClient } from "../appwrite";
 import { appWriteConfig } from "../appwrite/config";
+import { cookies } from "next/headers";
 
 const getUserByEmail = async (email: string) => {
   try {
@@ -60,6 +61,27 @@ export const createAccount = async ({
     );
   }
 
-  console.log("account created successfully")
+  console.log("account created successfully");
   return JSON.parse(JSON.stringify({ accountId }));
+};
+
+export const verifySecret = async ({
+  accountId,
+  password,
+}: {
+  accountId: string;
+  password: string;
+}) => {
+  try {
+    const { account } = await createAdminClient();
+    const session = await account.createSession(accountId, password);
+    (await cookies()).set("appwrite-session", session.secret, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+    });
+  } catch (error) {
+    console.log("Failed to verify OTP", error);
+  }
 };
