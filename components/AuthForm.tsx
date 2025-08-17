@@ -144,7 +144,7 @@ export default function AuthForm({ type }: { type: FormType }) {
           </div>
         </form>
       </Form>
-      {/* OTP VERIFICATIOn */}
+      {true && <OTPModal email={form.getValues("email")} accountId={accountId}/>}
     </>
   );
 }
