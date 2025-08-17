@@ -60,5 +60,6 @@ export const createAccount = async ({
     );
   }
 
+  console.log("account created successfully")
   return JSON.parse(JSON.stringify({ accountId }));
 };
