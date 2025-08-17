@@ -9,8 +9,8 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: "Personal Space",
-  description: "Personal Space - Your Own Space",
+  title: "Store IT",
+  description: "Store IT",
 };
 
 export default function RootLayout({
