@@ -13,7 +13,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
     <main className="flex h-screen">
       <SideBar {...currentUser} />
       <section className="flex flex-col h-full flex-1">
-        <MobileNavigation /> <Header />
+        <MobileNavigation {...currentUser} /> <Header />
         <div className="main-content">{children}</div>
       </section>
     </main>
