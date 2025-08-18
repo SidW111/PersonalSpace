@@ -7,7 +7,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 
-const handleError=(error:unknown,message:string) =>{
+export const handleError=async(error:unknown,message:string) =>{
 
   console.log(error,message)
   throw new Error

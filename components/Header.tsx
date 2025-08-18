@@ -4,12 +4,18 @@ import Search from "./Search";
 import FileUploader from "./FileUploader";
 import { signOutUser } from "@/utils/actions/user.actions";
 
-export default function Header() {
+export default function Header({
+  $id:ownerId,
+  accountId,
+}: {
+  $id: string;
+  accountId: string;
+}) {
   return (
     <header className="header">
       <Search />
       <div className="header-wrapper">
-        <FileUploader />
+        <FileUploader ownerId={ownerId} accountId={accountId} />
         <form
           action={async () => {
             "use server";

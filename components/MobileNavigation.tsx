@@ -3,8 +3,6 @@
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
-  SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
@@ -23,12 +21,12 @@ interface Props {
   email: string;
   fullName: string;
   avatar: string;
-  ownerId: string;
+  $id: string;
   accountId: string;
 }
 
 export default function MobileNavigation({
-  ownerId,
+  $id: ownerId,
   accountId,
   fullName,
   email,
@@ -101,7 +99,7 @@ export default function MobileNavigation({
 
           <Separator className="my-5 bg-light-200/20" />
           <div className="flex flex-col justify-between gap-3">
-            <FileUploader />
+            <FileUploader ownerId={ownerId} accountId={accountId} />
             <Button
               type="submit"
               className="mobile-sign-out-button"
