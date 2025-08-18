@@ -11,8 +11,8 @@ export default function Thumbnail({
   type: string;
   extension: string;
   url?: string;
-  imageClassName:string;
-  className:string
+  imageClassName?:string;
+  className?:string
 }) {
   const isImage = type === "image" && extension !== "svg";
   return (
