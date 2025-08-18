@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function SideBar() {
+export default function SideBar({email,fullName}:{fullName:string,email:string}) {
   const pathname = usePathname();
   return (
     <aside className="sidebar">
@@ -69,7 +69,8 @@ export default function SideBar() {
           className="sidebar-user-avatar"
         />
         <div className="hidden lg:block"> 
-            <p className="subtitle-2 capitalize "></p>
+            <p className="subtitle-2 capitalize ">{fullName}</p>
+            <p className="caption">{email}</p>
         </div>
 
       </div>

@@ -87,3 +87,4 @@ export const verifySecret = async ({
     console.log("Failed to verify OTP", error);
   }
 };
+
