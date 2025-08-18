@@ -6,7 +6,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function SideBar({email,fullName}:{fullName:string,email:string}) {
+interface Props {
+  fullName: string;
+  email: string;
+  avatar: string;
+}
+
+export default function SideBar({ email, fullName, avatar }: Props) {
   const pathname = usePathname();
   return (
     <aside className="sidebar">
@@ -14,7 +20,7 @@ export default function SideBar({email,fullName}:{fullName:string,email:string})
         <Image
           src="/assets/icons/logo-full-brand.svg"
           alt="logo"
-          height={50}
+          height={40}
           width={160}
           className="hidden h-auto lg:block"
         />
@@ -27,7 +33,7 @@ export default function SideBar({email,fullName}:{fullName:string,email:string})
         />
       </Link>
       <nav className="sidebar-nav">
-        <ul className="flex flex-1 flex-col gap-6">
+        <ul className="flex flex-1 flex-col gap-4">
           {navItems.map(({ url, name, icon }) => (
             <Link key={name} href={url} className="lg:w-full">
               <li
@@ -52,27 +58,30 @@ export default function SideBar({email,fullName}:{fullName:string,email:string})
           ))}
         </ul>
       </nav>
+
+      <div className="flex justify-center items-center">
+
       <Image
         src="/assets/images/files-2.png"
         alt="logo"
-        width={506}
-        height={418}
-        className="w-full"
+        width={200}
+        height={300}
+        className=""
       />
+      </div>
 
       <div className="sidebar-user-info">
         <Image
-          src={avatarPlaceholderUrl}
+          src={avatar}
           alt="avatar"
           width={44}
           height={44}
           className="sidebar-user-avatar"
         />
-        <div className="hidden lg:block"> 
-            <p className="subtitle-2 capitalize ">{fullName}</p>
-            <p className="caption">{email}</p>
+        <div className="hidden lg:block">
+          <p className="subtitle-2 capitalize ">{fullName}</p>
+          <p className="caption">{email}</p>
         </div>
-
       </div>
     </aside>
   );
