@@ -5,6 +5,7 @@ import { createAdminClient, createSessionClient } from "../appwrite";
 import { appWriteConfig } from "../appwrite/config";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { error } from "console";
 
 export const getUserByEmail = async (email: string) => {
   try {
@@ -83,35 +84,54 @@ export const verifySecret = async ({
       secure: true,
     });
 
-    return JSON.parse(JSON.stringify({sessionId:session.$id}))
+    return JSON.parse(JSON.stringify({ sessionId: session.$id }));
   } catch (error) {
     console.log("Failed to verify OTP", error);
   }
 };
 
 export const getCurrentUser = async () => {
-  const {databases,account} = await createSessionClient();
+  const { databases, account } = await createSessionClient();
 
   const result = await account.get();
 
-  const user = await databases.listDocuments(appWriteConfig.databaseId,appWriteConfig.usersCollectionId,[Query.equal("accountId",result.$id)])
+  const user = await databases.listDocuments(
+    appWriteConfig.databaseId,
+    appWriteConfig.usersCollectionId,
+    [Query.equal("accountId", result.$id)]
+  );
 
-  if(user.total<=0)return null;
+  if (user.total <= 0) return null;
 
-  return  JSON.parse(JSON.stringify(user.documents[0])) 
-}
+  return JSON.parse(JSON.stringify(user.documents[0]));
+};
 
-
-export const signOutUser = async() => {
-const  {account} = await createSessionClient();
+export const signOutUser = async () => {
+  const { account } = await createSessionClient();
 
   try {
-  await  account.deleteSession('current');
-  (await cookies()).delete('appwrite-session')
+    await account.deleteSession("current");
+    (await cookies()).delete("appwrite-session");
   } catch (error) {
-    console.log(error,"Failed to sign out user")
-  }finally{
-    redirect('/sign-in')
+    console.log(error, "Failed to sign out user");
+  } finally {
+    redirect("/sign-in");
   }
+};
 
-}
+export const signInUser = async ({ email }: { email: string }) => {
+  try {
+    const existingUser = await getUserByEmail(email);
+
+    if (existingUser) {
+      await sendEmailOTP({ email });
+      return JSON.parse(JSON.stringify({ accountId: existingUser.accountId }));
+    }
+
+    return JSON.parse(
+      JSON.stringify({ accountId: null, error: "User Not Found" })
+    );
+  } catch (error) {
+    console.log(error, "error signing in");
+  }
+};
