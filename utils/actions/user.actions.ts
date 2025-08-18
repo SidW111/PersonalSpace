@@ -5,7 +5,14 @@ import { createAdminClient, createSessionClient } from "../appwrite";
 import { appWriteConfig } from "../appwrite/config";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { error } from "console";
+
+
+const handleError=(error:unknown,message:string) =>{
+
+  console.log(error,message)
+  throw new Error
+
+}
 
 export const getUserByEmail = async (email: string) => {
   try {
@@ -18,7 +25,7 @@ export const getUserByEmail = async (email: string) => {
 
     return result.total > 0 ? result.documents[0] : null;
   } catch (error) {
-    console.log(error, "Error from getUserByEmail");
+    handleError(error, "Error from getUserByEmail");
   }
 };
 
@@ -29,7 +36,7 @@ export const sendEmailOTP = async ({ email }: { email: string }) => {
 
     return session.userId;
   } catch (error) {
-    console.log(error, "Error from email otp");
+    handleError(error, "Error from email otp");
   }
 };
 
@@ -86,7 +93,7 @@ export const verifySecret = async ({
 
     return JSON.parse(JSON.stringify({ sessionId: session.$id }));
   } catch (error) {
-    console.log("Failed to verify OTP", error);
+    handleError(error,"Failed to verify OTP");
   }
 };
 
@@ -113,7 +120,7 @@ export const signOutUser = async () => {
     await account.deleteSession("current");
     (await cookies()).delete("appwrite-session");
   } catch (error) {
-    console.log(error, "Failed to sign out user");
+    handleError(error, "Failed to sign out user");
   } finally {
     redirect("/sign-in");
   }
@@ -132,6 +139,6 @@ export const signInUser = async ({ email }: { email: string }) => {
       JSON.stringify({ accountId: null, error: "User Not Found" })
     );
   } catch (error) {
-    console.log(error, "error signing in");
+    handleError(error, "error signing in");
   }
 };

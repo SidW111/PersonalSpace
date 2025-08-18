@@ -18,7 +18,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import OTPModal from "./OTPModal";
-import { createAccount } from "@/utils/actions/user.actions";
+import { createAccount, signInUser } from "@/utils/actions/user.actions";
 
 type FormType = "sign-in" | "sign-up";
 
@@ -48,19 +48,22 @@ export default function AuthForm({ type }: { type: FormType }) {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
     setIsLoading(true);
-    setErrorMessage('')
+    setErrorMessage("");
 
     try {
-        const user = await createAccount({
-          fullName: values.fullName || "",
-          email: values.email,
-        });
-        setAccountId(user?.accountId);
-        
+      const user =
+        type === "sign-up"
+          ? await createAccount({
+              fullName: values.fullName || "",
+              email: values.email,
+            })
+          : await signInUser({ email: values.email });
+      setAccountId(user?.accountId);
     } catch (error) {
-        setErrorMessage('failed to create account. Please try again.')
-    } finally{
-        setIsLoading(false)
+      setErrorMessage(error
+        +"failed to create account. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
@@ -144,7 +147,9 @@ export default function AuthForm({ type }: { type: FormType }) {
           </div>
         </form>
       </Form>
-      {accountId && <OTPModal email={form.getValues("email")} accountId={accountId}/>}
+      {accountId && (
+        <OTPModal email={form.getValues("email")} accountId={accountId} />
+      )}
     </>
   );
 }
