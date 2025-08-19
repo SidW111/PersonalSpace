@@ -27,7 +27,7 @@ import { Button } from "./ui/button";
 import { renameFile } from "@/utils/actions/file.actions";
 import { usePathname } from "next/navigation";
 import { set } from "zod";
-import { FileDetails } from "./ActionsModalContent";
+import { FileDetails, ShareInput } from "./ActionsModalContent";
 
 type FileDoc = Models.Document & {
   url: string;
@@ -39,6 +39,7 @@ type FileDoc = Models.Document & {
   owner: {
     fullName: string;
   };
+  users: string[];
 };
 
 export default function ActionDropdown({ file }: { file: FileDoc }) {
@@ -47,14 +48,16 @@ export default function ActionDropdown({ file }: { file: FileDoc }) {
   const [action, setAction] = useState<ActionType | null>(null);
   const [name, setName] = useState(file.name.split(".")[0]);
   const [isLoading, setIsLoading] = useState(false);
-const path = usePathname();
+  const [email, setEmail] = useState<string[]>([]);
+
+  const path = usePathname();
   const closeAllModals = () => {
     setIsModalOpen(false);
     setIsDropdownOpen(false);
     setAction(null);
     setName(file.name);
     setIsLoading(false);
-  }
+  };
 
   const handleAction = async () => {
     if (!action) return;
@@ -62,22 +65,24 @@ const path = usePathname();
     setIsLoading(true);
 
     let success = false;
-    const actions={
-        rename: async () => renameFile({fileId:file.$id,name,extension:file.extension,path} ),
-        share:  async () => console.log("Share action not implemented yet"),
-        delete: async () => {
-          // Implement delete logic here
-          console.log("Delete action not implemented yet");
-        }
+    const actions = {
+      rename: async () =>
+        renameFile({ fileId: file.$id, name, extension: file.extension, path }),
+      share: async () => console.log("Share action not implemented yet"),
+      delete: async () => {
+        // Implement delete logic here
+        console.log("Delete action not implemented yet");
+      },
+    };
+    success = await actions[action.value as keyof typeof actions]();
 
-      }
-      success = await actions[action.value as keyof typeof actions]()
-      
-      closeAllModals();
-      setIsLoading(false);
-    
+    closeAllModals();
+    setIsLoading(false);
   };
 
+  const handleRemoveUser = (email: string) => {
+    setEmail((prev) => prev.filter((e) => e !== email));
+  };
 
   const renderDialogContent = () => {
     if (!action) return null;
@@ -97,24 +102,25 @@ const path = usePathname();
             />
           )}
           {value === "details" && <FileDetails file={file} />}
+          {value === "share" && <ShareInput file={file} onInputChange={setEmail} onRemove={handleRemoveUser} />}
         </DialogHeader>
         {["rename", "share", "delete"].includes(value) && (
           <DialogFooter className="flex flex-col gap-3 md:flex-row">
-          <Button onClick={closeAllModals} className="modal-cancel-button">
-          Cancel
-          </Button>
-          <Button onClick={handleAction} className="modal-submit-button">
-            <p className="capitalize">{value}</p>
-            {isLoading && (
-                <Image 
-                src="/assets/icons/loader.svg"
-                alt="loading"
-                height={24}
-                width={24}
-                className="animate-spin"
+            <Button onClick={closeAllModals} className="modal-cancel-button">
+              Cancel
+            </Button>
+            <Button onClick={handleAction} className="modal-submit-button">
+              <p className="capitalize">{value}</p>
+              {isLoading && (
+                <Image
+                  src="/assets/icons/loader.svg"
+                  alt="loading"
+                  height={24}
+                  width={24}
+                  className="animate-spin"
                 />
-            )}
-          </Button>
+              )}
+            </Button>
           </DialogFooter>
         )}
       </DialogContent>

@@ -16,6 +16,7 @@ type FileDoc = Models.Document & {
   owner: {
     fullName: string;
   };
+  users: string[];
 };
 
 const Card = ({ file }: { file: FileDoc }) => {
