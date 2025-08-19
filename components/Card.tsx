@@ -3,17 +3,19 @@ import Link from "next/link";
 import Thumbnail from "@/components/Thumbnail";
 import { convertFileSize } from "@/lib/utils";
 import FormattedDateTime from "@/components/FormattedDateTime";
-import ActionDropdown from "./ActionDropDown";
+import ActionDropdown from "./ActionDropdown";
 
- type FileDoc= Models.Document & {
+
+type FileDoc = Models.Document & {
   url: string;
-    type: string;
-    extension: string;
-    size: number;
-    name: string;
-    owner: {
-      fullName: string;
-    };
+  type: string;
+  extension: string;
+  size: number;
+  name: string;
+  bucketFileId: string;
+  owner: {
+    fullName: string;
+  };
 };
 
 const Card = ({ file }: { file: FileDoc }) => {
@@ -29,7 +31,7 @@ const Card = ({ file }: { file: FileDoc }) => {
         />
 
         <div className="flex flex-col items-end justify-between">
-<ActionDropdown file={file} />
+          <ActionDropdown file={file} />
           <p className="body-1">{convertFileSize(file.size)}</p>
         </div>
       </div>

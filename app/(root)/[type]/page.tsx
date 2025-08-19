@@ -9,6 +9,7 @@ type FileDoc = Models.Document & {
   extension: string;
   size: number;
   name: string;
+  bucketFileId: string;
   owner: {
     fullName: string;
   };
@@ -18,6 +19,7 @@ export default async function page({ params }: SearchParamProps) {
   const type = (await params)?.type as string | " ";
 
   const files = await getFiles();
+  console.log("Files:", files);
 
   return (
     <div className="page-container">
