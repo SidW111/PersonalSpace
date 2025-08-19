@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { createAdminClient } from "../appwrite";
 import { appWriteConfig } from "../appwrite/config";
 import { getCurrentUser } from "./user.actions";
+import { de } from "zod/v4/locales";
 
 const handleError = (error: unknown, message: string) => {
   console.log(error, message);
@@ -140,6 +141,31 @@ export const updateFileUser = async ({
     )
     revalidatePath(path)
     return parseStringify(updatedFile);
+  } catch (error) {
+    handleError(error, "Failed to rename file");
+  }
+}
+
+
+export const deleteFile = async ({
+  fileId,
+  bucketFileId,
+  path
+}: DeleteFileProps ) => {
+  const { databases,storage } = await createAdminClient();
+
+  try {
+    const deletedFile = await databases.deleteDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.filesCollectionId,
+      fileId,
+    )
+
+    if(deletedFile){
+      await storage.deleteFile(appWriteConfig.bucketId, bucketFileId);
+    }
+    revalidatePath(path)
+    return parseStringify({status:"success", message: "File deleted successfully"});
   } catch (error) {
     handleError(error, "Failed to rename file");
   }

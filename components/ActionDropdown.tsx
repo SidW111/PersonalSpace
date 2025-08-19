@@ -23,7 +23,7 @@ import Link from "next/link";
 import { constructDownloadUrl } from "@/lib/utils";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { renameFile, updateFileUser } from "@/utils/actions/file.actions";
+import { deleteFile, renameFile, updateFileUser } from "@/utils/actions/file.actions";
 import { usePathname } from "next/navigation";
 import { FileDetails, ShareInput } from "./ActionsModalContent";
 
@@ -72,10 +72,11 @@ export default function ActionDropdown({ file }: { file: FileDoc }) {
           emails: emails,
           path,
         }),
-      delete: async () => {
-        // Implement delete logic here
-        console.log("Delete action not implemented yet");
-      },
+      delete: async () => deleteFile({
+        fileId: file.$id, 
+        bucketFileId: file.bucketFileId,
+        path,
+      }),
     };
     success = await actions[action.value as keyof typeof actions]();
 
@@ -121,6 +122,12 @@ export default function ActionDropdown({ file }: { file: FileDoc }) {
               onInputChange={setEmails}
               onRemove={handleRemoveUser}
             />
+          )}
+          {value === "delete" && (
+            <p className="text-center text-light-100 delete-confirmation">
+              Are you sure you want to delete {` `}
+           <span className="delete-file-name">{file.name}</span>?
+            </p>
           )}
         </DialogHeader>
         {["rename", "share", "delete"].includes(value) && (
