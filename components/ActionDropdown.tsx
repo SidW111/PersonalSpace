@@ -24,6 +24,9 @@ import Link from "next/link";
 import { constructDownloadUrl } from "@/lib/utils";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { renameFile } from "@/utils/actions/file.actions";
+import { usePathname } from "next/navigation";
+import { set } from "zod";
 
 type FileDoc = Models.Document & {
   url: string;
@@ -43,7 +46,7 @@ export default function ActionDropdown({ file }: { file: FileDoc }) {
   const [action, setAction] = useState<ActionType | null>(null);
   const [name, setName] = useState(file.name.split(".")[0]);
   const [isLoading, setIsLoading] = useState(false);
-
+const path = usePathname();
   const closeAllModals = () => {
     setIsModalOpen(false);
     setIsDropdownOpen(false);
@@ -56,28 +59,22 @@ export default function ActionDropdown({ file }: { file: FileDoc }) {
     if (!action) return;
 
     setIsLoading(true);
-    try {
-      switch (action.value) {
-        case "rename":
-          // Handle rename logic here
-          break;
-        case "share":
-          // Handle share logic here
-          break;
-        case "delete":
-          // Handle delete logic here
-          break;
-        case "details":
-          // Handle details logic here
-          break;
-        default:
-          break;
+
+    let success = false;
+    const actions={
+        rename: async () => renameFile({fileId:file.$id,name,extension:file.extension,path} ),
+        share:  async () => console.log("Share action not implemented yet"),
+        delete: async () => {
+          // Implement delete logic here
+          console.log("Delete action not implemented yet");
+        }
+
       }
-    } catch (error) {
-      console.error("Error handling action:", error);
-    } finally {
+      success = await actions[action.value as keyof typeof actions]()
+      
       closeAllModals();
-    }
+      setIsLoading(false);
+    
   };
 
 
