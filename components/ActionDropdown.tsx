@@ -27,6 +27,7 @@ import { Button } from "./ui/button";
 import { renameFile } from "@/utils/actions/file.actions";
 import { usePathname } from "next/navigation";
 import { set } from "zod";
+import { FileDetails } from "./ActionsModalContent";
 
 type FileDoc = Models.Document & {
   url: string;
@@ -95,6 +96,7 @@ const path = usePathname();
               onChange={(e) => setName(e.target.value)}
             />
           )}
+          {value === "details" && <FileDetails file={file} />}
         </DialogHeader>
         {["rename", "share", "delete"].includes(value) && (
           <DialogFooter className="flex flex-col gap-3 md:flex-row">
