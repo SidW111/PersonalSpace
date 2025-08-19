@@ -1,5 +1,6 @@
 import Card from "@/components/Card";
 import Sort from "@/components/Sort";
+import { getFileTypesParams } from "@/lib/utils";
 import { getFiles } from "@/utils/actions/file.actions";
 import { Models } from "node-appwrite";
 
@@ -13,13 +14,15 @@ type FileDoc = Models.Document & {
   owner: {
     fullName: string;
   };
+  users: string[];
 };
 
 export default async function page({ params }: SearchParamProps) {
   const type = (await params)?.type as string | " ";
 
-  const files = await getFiles();
-  console.log("Files:", files);
+  const types = getFileTypesParams(type) as FileType[];
+
+  const files = await getFiles({types});
 
   return (
     <div className="page-container">
