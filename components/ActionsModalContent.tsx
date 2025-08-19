@@ -90,7 +90,7 @@ export const ShareInput = ({
                 className="flex items-center justify-between gap-2"
               >
                 <p className="subtitle-2">{email}</p>
-                <Button onClick={() => onRemove(email)} className="remove-user-button">
+                <Button onClick={() => onRemove(email)} className="share-remove-user">
                   <Image
                     src="assets/icons/remove.svg"
                     alt="remove user"

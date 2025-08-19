@@ -4,7 +4,6 @@ import { Models } from "node-appwrite";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -24,9 +23,8 @@ import Link from "next/link";
 import { constructDownloadUrl } from "@/lib/utils";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { renameFile } from "@/utils/actions/file.actions";
+import { renameFile, updateFileUser } from "@/utils/actions/file.actions";
 import { usePathname } from "next/navigation";
-import { set } from "zod";
 import { FileDetails, ShareInput } from "./ActionsModalContent";
 
 type FileDoc = Models.Document & {
@@ -48,7 +46,7 @@ export default function ActionDropdown({ file }: { file: FileDoc }) {
   const [action, setAction] = useState<ActionType | null>(null);
   const [name, setName] = useState(file.name.split(".")[0]);
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState<string[]>([]);
+  const [emails, setEmails] = useState<string[]>([]);
 
   const path = usePathname();
   const closeAllModals = () => {
@@ -68,7 +66,12 @@ export default function ActionDropdown({ file }: { file: FileDoc }) {
     const actions = {
       rename: async () =>
         renameFile({ fileId: file.$id, name, extension: file.extension, path }),
-      share: async () => console.log("Share action not implemented yet"),
+      share: async () =>
+        updateFileUser({
+          fileId: file.$id,
+          emails: emails,
+          path,
+        }),
       delete: async () => {
         // Implement delete logic here
         console.log("Delete action not implemented yet");
@@ -80,8 +83,18 @@ export default function ActionDropdown({ file }: { file: FileDoc }) {
     setIsLoading(false);
   };
 
-  const handleRemoveUser = (email: string) => {
-    setEmail((prev) => prev.filter((e) => e !== email));
+  const handleRemoveUser = async (email: string) => {
+    const updatedEmails = emails.filter((e) => e !== email);
+    const success = await updateFileUser({
+      fileId: file.$id,
+      emails: updatedEmails,
+      path,
+    });
+
+    if (success) {
+      setEmails(updatedEmails);
+    }
+    closeAllModals();
   };
 
   const renderDialogContent = () => {
@@ -102,7 +115,13 @@ export default function ActionDropdown({ file }: { file: FileDoc }) {
             />
           )}
           {value === "details" && <FileDetails file={file} />}
-          {value === "share" && <ShareInput file={file} onInputChange={setEmail} onRemove={handleRemoveUser} />}
+          {value === "share" && (
+            <ShareInput
+              file={file}
+              onInputChange={setEmails}
+              onRemove={handleRemoveUser}
+            />
+          )}
         </DialogHeader>
         {["rename", "share", "delete"].includes(value) && (
           <DialogFooter className="flex flex-col gap-3 md:flex-row">
