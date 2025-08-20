@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { success, z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -46,7 +46,6 @@ export default function AuthForm({ type }: { type: FormType }) {
     },
   });
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
     setIsLoading(true);
     setErrorMessage("");
 
@@ -58,13 +57,13 @@ export default function AuthForm({ type }: { type: FormType }) {
               email: values.email,
             })
           : await signInUser({ email: values.email });
-      setAccountId(user?.accountId);
+      setAccountId(user.accountId);
+      
     } catch (error) {
-      setErrorMessage(error
-        +"failed to create account. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+      setErrorMessage( "failed to create account. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
   };
   return (
     <>

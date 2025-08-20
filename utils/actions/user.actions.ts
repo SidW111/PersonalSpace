@@ -5,14 +5,12 @@ import { createAdminClient, createSessionClient } from "../appwrite";
 import { appWriteConfig } from "../appwrite/config";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { parseStringify } from "@/lib/utils";
 
-
-export const handleError=async(error:unknown,message:string) =>{
-
-  console.log(error,message)
-  throw new Error
-
-}
+export const handleError = async (error: unknown, message: string) => {
+  console.log(error, message);
+  throw new Error();
+};
 
 export const getUserByEmail = async (email: string) => {
   try {
@@ -93,29 +91,27 @@ export const verifySecret = async ({
 
     return JSON.parse(JSON.stringify({ sessionId: session.$id }));
   } catch (error) {
-    handleError(error,"Failed to verify OTP");
+    handleError(error, "Failed to verify OTP");
   }
 };
 
 export const getCurrentUser = async () => {
-
   try {
-    
     const { databases, account } = await createSessionClient();
-  
+
     const result = await account.get();
-  
+
     const user = await databases.listDocuments(
       appWriteConfig.databaseId,
       appWriteConfig.usersCollectionId,
       [Query.equal("accountId", result.$id)]
     );
-  
+
     if (user.total <= 0) return null;
-  
+
     return JSON.parse(JSON.stringify(user.documents[0]));
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 };
 
@@ -135,15 +131,13 @@ export const signOutUser = async () => {
 export const signInUser = async ({ email }: { email: string }) => {
   try {
     const existingUser = await getUserByEmail(email);
-
+    if (!existingUser) throw new Error("No user Found");
     if (existingUser) {
       await sendEmailOTP({ email });
       return JSON.parse(JSON.stringify({ accountId: existingUser.accountId }));
     }
 
-    return JSON.parse(
-      JSON.stringify({ accountId: null, error: "User Not Found" })
-    );
+    return parseStringify({ accountId: null, error: "User not found" });
   } catch (error) {
     handleError(error, "error signing in");
   }
