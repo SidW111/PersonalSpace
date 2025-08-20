@@ -5,7 +5,7 @@ import FileUploader from "./FileUploader";
 import { signOutUser } from "@/utils/actions/user.actions";
 
 export default function Header({
-  $id:ownerId,
+  $id: ownerId,
   accountId,
 }: {
   $id: string;

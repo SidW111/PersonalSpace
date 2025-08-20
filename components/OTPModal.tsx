@@ -46,7 +46,7 @@ export default function OTPModal({
   };
 
   const handleResendOtp = async () => {
-    await sendEmailOTP({email})
+    await sendEmailOTP({ email });
   };
 
   return (

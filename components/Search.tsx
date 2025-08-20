@@ -4,7 +4,6 @@ import Image from "next/image";
 import { Input } from "./ui/input";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { set } from "zod";
 import { Models } from "node-appwrite";
 import { getFiles } from "@/utils/actions/file.actions";
 import Thumbnail from "./Thumbnail";
@@ -32,17 +31,17 @@ export default function Search() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const path = usePathname();
-  const [debounceQuery] = useDebounce(query, 300); 
+  const [debounceQuery] = useDebounce(query, 300);
 
   useEffect(() => {
     const fetchFiles = async () => {
-        if (debounceQuery.length === 0) {
-          setResults([]);
-            setOpen(false);
-            
-          return router.push(path.replace(searchParams.toString(), ""));
-        }
-      const files = await getFiles({ types:[], searchText: debounceQuery });
+      if (debounceQuery.length === 0) {
+        setResults([]);
+        setOpen(false);
+
+        return router.push(path.replace(searchParams.toString(), ""));
+      }
+      const files = await getFiles({ types: [], searchText: debounceQuery });
       setResults(files.documents);
       setOpen(true);
     };
@@ -57,8 +56,14 @@ export default function Search() {
   const handleClick = (file: FileDoc) => {
     setOpen(false);
     setResults([]);
-    router.push(`/${(file.type === 'video'  || file.type === 'audio')? 'media' : file.type + 's'}?query=${query}`);
-  }
+    router.push(
+      `/${
+        file.type === "video" || file.type === "audio"
+          ? "media"
+          : file.type + "s"
+      }?query=${query}`
+    );
+  };
   return (
     <div className="search">
       <div className="search-input-wrapper">
@@ -79,7 +84,7 @@ export default function Search() {
             {results.length > 0 ? (
               results.map((file) => (
                 <li
-                onClick={() => handleClick(file)}
+                  onClick={() => handleClick(file)}
                   key={file.$id}
                   className="flex items-center justify-between"
                 >
@@ -90,9 +95,13 @@ export default function Search() {
                       url={file.url}
                       className={"size-9 min-w-9"}
                     />
-                    <p className="subtitle-2 line-clamp-1 text-light-100"></p> {file.name}
+                    <p className="subtitle-2 line-clamp-1 text-light-100"></p>{" "}
+                    {file.name}
                   </div>
-                  <FormattedDateTime  date={file.$createdAt} className="caption line-clamp-1 text-light-200" />
+                  <FormattedDateTime
+                    date={file.$createdAt}
+                    className="caption line-clamp-1 text-light-200"
+                  />
                 </li>
               ))
             ) : (

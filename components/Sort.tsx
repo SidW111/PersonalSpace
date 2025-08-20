@@ -18,10 +18,7 @@ export default function Sort() {
     router.push(`${path}?sort=${value}`);
   };
   return (
-    <Select
-      onValueChange={handleSort}
-      defaultValue={sortTypes[0].value}
-    >
+    <Select onValueChange={handleSort} defaultValue={sortTypes[0].value}>
       <SelectTrigger className="sort-select">
         <SelectValue placeholder={sortTypes[0].value} />
       </SelectTrigger>
