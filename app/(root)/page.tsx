@@ -1,8 +1,16 @@
+import Chart from "@/components/Chart";
 
 export default function Home() {
   return (
-    <div className="flex-center h-screen">
-    <h1 className="h1">StoreIt- The only storage solution you need.</h1>
-    </div>
+
+      <div className="mx-auto max-w-7xl px-5 grid grid-cols-1 md:grid-cols-2 gap-4 xl:gap-10">
+        <section>
+          <Chart used={0} />
+        </section>
+        <section>
+ss
+        </section>
+      </div>
+  
   );
 }
