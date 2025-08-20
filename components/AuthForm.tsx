@@ -58,12 +58,11 @@ export default function AuthForm({ type }: { type: FormType }) {
             })
           : await signInUser({ email: values.email });
       setAccountId(user.accountId);
-      
     } catch (error) {
-      setErrorMessage( "failed to create account. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
+      setErrorMessage("Failed to authenticate. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <>
